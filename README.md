@@ -288,7 +288,7 @@ Future versions of BAYORA can include:
 The Coders
 - Ananya Bansal
 - Sparsh Dheer
-- Kanishka Rana
+- Akshay Singhal
 
 ---
 
