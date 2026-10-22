@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAYORA | AI Safety Infrastructure</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 28px;
+            font-family: Arial, sans-serif;
+            background: #0b1020;
+            color: #eef2ff;
+        }
+
+        header { margin-bottom: 24px; }
+
+        h1 { margin-bottom: 8px; }
+
+        .muted { color: #aab5d0; }
+
+        .banner {
+            padding: 12px;
+            background: #302b19;
+            border: 1px solid #75612b;
+            border-radius: 8px;
+            color: #ffe3a1;
+            margin: 18px 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            background: #151d33;
+            border: 1px solid #293552;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .status {
+            font-size: 20px;
+            font-weight: bold;
+            color: #6ee7b7;
+        }
+
+        label, select, button { display: block; }
+
+        label { margin: 14px 0 8px; }
+
+        select, button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 7px;
+            border: 1px solid #42516f;
+            font-size: 15px;
+        }
+
+        select {
+            background: #0b1020;
+            color: white;
+        }
+
+        button {
+            margin-top: 12px;
+            background: #526cf5;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button.secondary { background: #293552; }
+
+        pre {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            color: #b9f6d5;
+            background: #080d19;
+            padding: 14px;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 700px) {
+            body { padding: 16px; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <h1>🛡️ BAYORA</h1>
+    <div class="muted">
+        Securing Adversarial AI Safety Testing Infrastructure
+    </div>
+</header>
+
+<div class="banner">
+    DEMONSTRATION MODE — evaluations are simulated.
+    No real LLM security assessment is performed.
+</div>
+
+<section class="grid">
+    <div class="card">
+        <h3>🔴 Red Team</h3>
+        <div class="status">READY</div>
+        <p class="muted">Controlled test submission</p>
+    </div>
+
+    <div class="card">
+        <h3>🔵 Blue Team</h3>
+        <div class="status">READY</div>
+        <p class="muted">Simulated policy review</p>
+    </div>
+
+    <div class="card">
+        <h3>🤖 Client LLM</h3>
+        <div class="status">SIMULATED</div>
+        <p class="muted">No live model connected</p>
+    </div>
+</section>
+
+<section class="card">
+    <h2>Run an Evaluation</h2>
+
+    <label for="category">Test category</label>
+    <select id="category">
+        <option value="prompt_robustness">Prompt robustness</option>
+        <option value="policy_compliance">Policy compliance</option>
+        <option value="session_isolation">Session isolation</option>
+    </select>
+
+    <label for="outcome">Choose simulated outcome</label>
+    <select id="outcome">
+        <option value="pass">Pass — demonstration case</option>
+        <option value="flag">Flag for review — demonstration case</option>
+    </select>
+
+    <button onclick="runEvaluation()">Run Simulated Evaluation</button>
+    <button class="secondary" onclick="loadAudit()">View Audit Events</button>
+    <button class="secondary" onclick="verifyAudit()">Verify Audit Chain</button>
+    <button class="secondary" onclick="checkHealth()">Check Backend</button>
+</section>
+
+<section class="card">
+    <h2>Evaluation / Audit Output</h2>
+    <pre id="output">Start the backend, then run a simulated evaluation.</pre>
+</section>
+
+<script>
+    const API = "http://127.0.0.1:8000";
+
+    async function callApi(path, options = {}) {
+        const response = await fetch(API + path, options);
+        if (!response.ok) {
+            throw new Error("HTTP error: " + response.status);
+        }
+        return response.json();
+    }
+
+    function show(data) {
+        document.getElementById("output").textContent =
+            JSON.stringify(data, null, 2);
+    }
+
+    async function runEvaluation() {
+        try {
+            const result = await callApi("/api/evaluate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    test_category:
+                        document.getElementById("category").value,
+                    simulated_outcome:
+                        document.getElementById("outcome").value
+                })
+            });
+            show(result);
+        } catch (error) {
+            show({
+                error: error.message,
+                instruction: "Start the FastAPI backend first."
+            });
+        }
+    }
+
+    async function loadAudit() {
+        try {
+            show(await callApi("/api/audit"));
+        } catch (error) {
+            show({ error: error.message });
+        }
+    }
+
+    async function verifyAudit() {
+        try {
+            show(await callApi("/api/audit/verify"));
+        } catch (error) {
+            show({ error: error.message });
+        }
+    }
+
+    async function checkHealth() {
+        try {
+            show(await callApi("/api/health"));
+        } catch (error) {
+            show({ error: error.message });
+        }
+    }
+</script>
+</body>
+</html>
