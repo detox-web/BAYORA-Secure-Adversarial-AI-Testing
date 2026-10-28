@@ -294,6 +294,12 @@ def verify_audit():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="BAYORA prototype")
+    
+    parser.add_argument(
+        "--red-team",
+        action="store_true",
+        help="Run Red Team security tests",
+    )
     parser.add_argument(
         "--verify",
         action="store_true",
@@ -311,5 +317,8 @@ if __name__ == "__main__":
         verify_audit()
     elif args.blue_review:
         blue_team_review()
-    else:
+    elif args.red_team:
+        print("\n=== Red Team Mode ===")
         run_tests()
+    else:
+        parser.print_help()
